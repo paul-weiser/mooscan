@@ -54,15 +54,15 @@ def scrape():
 
         if assessmentEnd > datetime.now():
             workshopDetailsRequest = requests.get('https://' + moodleServer + '/webservice/rest/server.php?moodlewsrestformat=json&wsfunction=tool_mobile_call_external_functions&wstoken=' + wstoken + '&requests[0][function]=mod_workshop_get_submissions&requests[0][arguments]={"workshopid":"' + str(workshop["id"]) + '","userid":"0","groupid":"0"}&requests[1][function]=mod_workshop_get_reviewer_assessments&requests[1][arguments]={"workshopid":"' + str(workshop["id"]) + '"}')
-            workshopDetails = workshopDetailsRequest.json()
-            submissions = json.loads(workshopDetails["responses"][0]["data"])
-            assesments = json.loads(workshopDetails["responses"][1]["data"])
+            workshopDetails = workshopDetailsRequest.json()["responses"]
+            submissions = json.loads(workshopDetails[0]["data"])
 
             submitted = True if submissions["totalcount"] > 0 else False
 
             assessed = True
 
             if submissionPhaseEnded:
+                assesments = json.loads(workshopDetails[1]["data"])
                 assessmentsRequest = requests.get('https://' + moodleServer + '/webservice/rest/server.php?moodlewsrestformat=json&wsfunction=mod_workshop_get_reviewer_assessments&wstoken=' + wstoken + '&workshopid='+ str(workshop["id"]))
                 assessments = assessmentsRequest.json()["assessments"]
 
